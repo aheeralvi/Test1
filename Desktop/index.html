@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<head>
+    <!--Aheer Alvi-->
+    <!--Last Modified: 4/7/17-->
+    <!--Notes: This page displays information and shows a graphic discussing the LSRL-->
+
+    <title>LSRL Project</title>
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        
+        p {
+            font-size: 16px;
+        }
+        
+        p.big {
+            font-size: 30px;
+        }
+        
+        #formula {
+            width: 400px;
+            height: 325px;
+        }
+        
+        #lower {
+            display: none;
+        }
+        
+        #canvas {
+            border: solid black;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h1>The Least-Squares Regression Line</h1>
+    <p class="desc">
+        The Least-Squares Regression Line, or LSRL, is an accurate calculation used in statistics to find the "line of best fit," or the straight line that best approximates a set of data points. It is used to help determine the relationship between two variables.
+        The LSRL is intended to minimize the sum of the sqaures of the errors between each data point and the line.
+    </p>
+    <p class="desc">
+        The least-squares regression line can be calculated using a number of different equations that all simplify to the same formula. We will use the following equations:
+    </p>
+    <img id="formula" src="http://www.atx7006.com/img/lin/best_fitting_line.jpg" alt="Image showing the formulae used in LSRL calculation">
+    <p class="desc">
+        The final LSRL is then written in slope-intercept form (where offset is equivalent to intercept):
+    </p>
+    <p class="big">
+        Y = a*x+b
+    </p>
+    <p class="desc">
+        Click the button below to get started playing around with the LSRL! Enter any number of data points you'd like, and the graph will plot them. When there are three or more data points, an LSRL will appear on the graph, and the calculated equation will
+        be shown.
+
+    </p>
+    <button type="button" onclick="show('lower')">Click to Start</button>
+    <div id="lower">
+        <canvas id="canvas" width="1000px" height="500px">
+            This text is displayed if the browser does not support HTML5 Canvas
+        </canvas>
+        <script>
+            var counter = 0;
+            //store x, y coordinates in two arrays
+            var xdata = new Array(30),
+                ydata = new Array(30);
+
+            //draw the graph
+            var graph = document.getElementById("canvas");
+            var context = graph.getContext('2d');
+            var intercept = 0;
+            var slope = 0;
+            context.moveTo(500, 0);
+            context.lineTo(500, 500);
+            context.stroke();
+            context.moveTo(0, 250);
+            context.lineTo(1000, 250);
+            context.stroke();
+            context.moveTo(500, 250);
+
+            //used to reveal the lower elements of the page
+            function show(id) {
+                document.getElementById(id).style.display = 'block';
+            }
+
+            //calculate the LSRL, draw the data points and the line
+            function calculate() {
+                //get data values
+                for (var loop = 0; loop < counter + 1; loop++) {
+                    xdata[loop] = document.getElementById("xdata" + loop).value;
+                    ydata[loop] = document.getElementById("ydata" + loop).value;
+                    //if one of the inputs is blank, use 0 instead
+                    if (isNaN(xdata[loop])) {
+                        xdata[loop] = 0;
+                    }
+                    if (isNaN(ydata[loop])) {
+                        ydata[loop] = 0;
+                    }
+                }
+                //make sure there are at least three data points
+                if (counter < 2) {
+                    alert("Please make sure there are at least three empty data points.");
+                    return;
+                }
+
+                //proceed with calculation
+                var sumxy = 0,
+                    sumx = 0,
+                    sumy = 0,
+                    sumxsq = 0;
+                for (number in xdata) {
+                    sumx += number;
+                }
+                for (number in ydata) {
+                    sumy += number;
+                }
+                for (var i = 0; i < counter + 1; i++) {
+                    sumxy += xdata[i] * ydata[i];
+                }
+                for (var i = 0; i < counter + 1; i++) {
+                    sumxsq += xdata[i] * xdata[i];
+                }
+                //sumx and sumy automagically converted to strings for reason unknown, so I change them back. 
+                sumx = parseInt(sumx);
+                sumy = parseInt(sumy);
+                sumxsq = parseInt(sumxsq);
+                sumxy = parseInt(sumxy);
+                intercept = (sumxy * sumx - sumxsq * sumy) / (sumx * sumx - sumxsq * (counter + 1));
+                slope = (sumy - (counter + 1) * intercept) / sumx;
+                alert("The LSRL is Y = " + slope + "*x + " + intercept + ". Close this message to see the graph.")
+
+                //change stroke color to red so data points appear red
+                context.strokeStyle = "FF0000";
+                //graph the data points. Note that (0,0) in the coordinates for canvas is actually the top left corner
+                //the origin of the graph is 500, 250
+
+                for (var i = 0; i < counter + 1; i++) {
+                    var tempx = xdata[i] * 10;
+                    var tempy = ydata[i] * 10
+                    context.beginPath();
+                    context.arc(500 + tempx, 250 - tempy, 2, 0, 2 * Math.PI)
+                    context.stroke();
+                }
+
+                //graph the LSRL
+                var startY = (slope * -50 + intercept) * 10;
+                var endY = (slope * 50 + intercept) * 10;
+                context.strokeStyle = "#000000"
+                context.beginPath();
+                context.moveTo(0, 250 - startY);
+                context.lineTo(1000, 250 - endY);
+                context.stroke();
+            }
+
+            //when the "New Point" button is clicked, this code creates an additional set of input boxes
+            function newPoint() {
+                counter++;
+                var body = document.getElementsByTagName("body")[0];
+                var newdiv = document.createElement('div');
+                newdiv.className = "field";
+                var xinput = document.createElement('input');
+                var yinput = document.createElement('input');
+                xinput.id = "xdata" + counter;
+                yinput.id = "ydata" + counter;
+                newdiv.appendChild(xinput);
+                newdiv.appendChild(yinput);
+                body.appendChild(newdiv);
+            }
+        </script>
+        <p></p>
+        <button type="button" onclick="newPoint()">New Point</button>
+        <button type="button" onclick="calculate()">Draw and Calculate</button>
+        <div class="field">
+            <p>Enter x, y coordinate for each point. Please note that the x-axis spans from -50 to 50, and the y-axis spans -25 to 25. Any data points outside of this range will not appear on the graph.</p>
+            <input id="xdata0"><input id="ydata0">
+        </div>
+    </div>
+</body>
