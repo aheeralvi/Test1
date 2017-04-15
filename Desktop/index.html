@@ -78,7 +78,7 @@
 
         //draw the graph
         var graph = document.getElementById("canvas");
-        var context = graph.getContext('2d');
+        var context = graph.getContext("2d");
         var intercept = 0;
         var slope = 0;
         context.moveTo(500, 0);
@@ -91,7 +91,7 @@
 
         //used to reveal the lower elements of the page
         function show(id) {
-            document.getElementById(id).style.display = 'block';
+            document.getElementById(id).style.display = "block";
         }
 
         //calculate the LSRL, draw the data points and the line
@@ -167,10 +167,10 @@
         function newPoint() {
             counter++;
             var body = document.getElementsByTagName("body")[0];
-            var newdiv = document.createElement('div');
+            var newdiv = document.createElement("div");
             newdiv.className = "field";
-            var xinput = document.createElement('input');
-            var yinput = document.createElement('input');
+            var xinput = document.createElement("input");
+            var yinput = document.createElement("input");
             xinput.id = "xdata" + counter;
             yinput.id = "ydata" + counter;
             newdiv.appendChild(xinput);
